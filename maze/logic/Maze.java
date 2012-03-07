@@ -64,7 +64,6 @@ public class Maze
         n_dragon = 2;
 
         dragon = new Dragon(3, 1, 'D');
-        dragon = new Dragon(5, 3, 'D');
     }
 
     private boolean outOfBounds(int lin, int col)
@@ -194,8 +193,7 @@ public class Maze
                 if (outOfBounds(dragon.getLine(), dragon.getColumn()) == true
                         || board[dragon.getLine()][dragon.getColumn()] == wall
                         || board[dragon.getLine()][dragon.getColumn()] == sword.getSymbol()
-                        || board[dragon.getLine()][dragon.getColumn()] == exit.getSymbol()
-                        || board[dragon.getLine()][dragon.getColumn()] == dragon.getSymbol())
+                        || board[dragon.getLine()][dragon.getColumn()] == exit.getSymbol())
                 {
                     dragon.returnToLastPostion();
                     validPlay = false;
@@ -204,7 +202,7 @@ public class Maze
 
             board[dragon.getLine()][dragon.getColumn()] = dragon.getSymbol();
 
-            if (((dragon.getLastLine() != dragon.getLine()) || (dragon.getLastColumn() != dragon.getColumn())) && (dragon.getLastColumn() >= 0 && dragon.getLastLine() >= 0))
+            if (((dragon.getLastLine() != dragon.getLine()) || (dragon.getLastColumn() != dragon.getColumn())) && (dragon.getLastColumn() > 0 && dragon.getLastLine() > 0))
             {
                 board[dragon.getLastLine()][dragon.getLastColumn()] = empty;
             }
