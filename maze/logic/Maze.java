@@ -47,7 +47,7 @@ public class Maze
     private char wall = 'X';
     private Hero hero;
     private Persona sword;
-    private Dragon[] dragons = new Dragon[2];
+    private Dragon dragon;
     private Exit exit;
 
     public Maze()
@@ -63,8 +63,8 @@ public class Maze
 
         n_dragon = 2;
 
-        dragons[0] = new Dragon(3, 1, 'D');
-        dragons[1] = new Dragon(5, 3, 'D');
+        dragon = new Dragon(3, 1, 'D');
+        dragon = new Dragon(5, 3, 'D');
     }
 
     private boolean outOfBounds(int lin, int col)
@@ -87,7 +87,7 @@ public class Maze
         System.out.println("hero: [" + hero.getLine() + "," + hero.getColumn() + "]");
         for (int i = 0; i < n_dragon; i++)
         {
-            System.out.println("dragon: [" + dragons[i].getLine() + "," + dragons[i].getColumn() + "]");
+            System.out.println("dragon: [" + dragon.getLine() + "," + dragon.getColumn() + "]");
         }
         System.out.println("sword: [" + sword.getLine() + "," + sword.getColumn() + "]");
         System.out.println("exit: [" + exit.getLine() + "," + exit.getColumn() + "]");
@@ -143,28 +143,23 @@ public class Maze
 
     private void heroVsDragon()
     {
-        for (int i = 0; i < dragons.length; i++)
+        if (hero.isAdjacentTo(dragon))
         {
-            if (hero.isAdjacentTo(dragons[i]))
+            if (hero.isArmed())
             {
-                if (hero.isArmed())
-                {
-                    dragons[i].die();
-                    board[dragons[i].getLine()][dragons[i].getColumn()] = ' ';
-                }
-                else
-                {
-                    hero.die();
-                }
+                dragon.die();
+                board[dragon.getLine()][dragon.getColumn()] = ' ';
+            }
+            else
+            {
+                hero.die();
             }
         }
     }
 
     public void moveDragons() // moves the dragon IF NOT dead
     {
-        for (int i = 0; i < dragons.length; i++)
-        {
-        if (dragons[i].isDead() || hero.isDead())
+        if (dragon.isDead() || hero.isDead())
         {
             return;
         }
@@ -184,42 +179,41 @@ public class Maze
                     case 0:
                         break;
                     case 1:
-                        dragons[i].goDown();
+                        dragon.goDown();
                         break;
                     case 2:
-                        dragons[i].goLeft();
+                        dragon.goLeft();
                         break;
                     case 3:
-                        dragons[i].goRight();
+                        dragon.goRight();
                         break;
                     case 4:
-                        dragons[i].goUp();
+                        dragon.goUp();
                         break;
                 }
 
                 validPlay = true;
 
-                if (outOfBounds(dragons[i].getLine(), dragons[i].getColumn()) == true
-                        || board[dragons[i].getLine()][dragons[i].getColumn()] == wall
-                        || board[dragons[i].getLine()][dragons[i].getColumn()] == sword.getSymbol()
-                        || board[dragons[i].getLine()][dragons[i].getColumn()] == exit.getSymbol()
-                        || board[dragons[i].getLine()][dragons[i].getColumn()] == dragons[i].getSymbol())
+                if (outOfBounds(dragon.getLine(), dragon.getColumn()) == true
+                        || board[dragon.getLine()][dragon.getColumn()] == wall
+                        || board[dragon.getLine()][dragon.getColumn()] == sword.getSymbol()
+                        || board[dragon.getLine()][dragon.getColumn()] == exit.getSymbol()
+                        || board[dragon.getLine()][dragon.getColumn()] == dragon.getSymbol())
                 {
-                    dragons[i].returnToLastPostion();
+                    dragon.returnToLastPostion();
                     validPlay = false;
                 }
             }
 
-            board[dragons[i].getLine()][dragons[i].getColumn()] = dragons[i].getSymbol();
+            board[dragon.getLine()][dragon.getColumn()] = dragon.getSymbol();
 
-            if (((dragons[i].getLastLine() != dragons[i].getLine()) || (dragons[i].getLastColumn() != dragons[i].getColumn())) && (dragons[i].getLastColumn() >= 0 && dragons[i].getLastLine() >= 0))
+            if (((dragon.getLastLine() != dragon.getLine()) || (dragon.getLastColumn() != dragon.getColumn())) && (dragon.getLastColumn() >= 0 && dragon.getLastLine() >= 0))
             {
-                board[dragons[i].getLastLine()][dragons[i].getLastColumn()] = empty;
+                board[dragon.getLastLine()][dragon.getLastColumn()] = empty;
             }
 
             heroVsDragon();
         }
-    }
     }
 
     public int winner()
@@ -235,6 +229,8 @@ public class Maze
         else // continue the game
         {
             return 1;
+
+
         }
     }
 
