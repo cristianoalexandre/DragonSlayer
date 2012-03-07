@@ -85,10 +85,7 @@ public class Maze
         }
 
         System.out.println("hero: [" + hero.getLine() + "," + hero.getColumn() + "]");
-        for (int i = 0; i < n_dragon; i++)
-        {
-            System.out.println("dragon: [" + dragon.getLine() + "," + dragon.getColumn() + "]");
-        }
+        System.out.println("dragon: [" + dragon.getLine() + "," + dragon.getColumn() + "]");
         System.out.println("sword: [" + sword.getLine() + "," + sword.getColumn() + "]");
         System.out.println("exit: [" + exit.getLine() + "," + exit.getColumn() + "]");
 
