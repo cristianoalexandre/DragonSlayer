@@ -192,12 +192,20 @@ public class Maze
 
                 if (outOfBounds(dragon.getLine(), dragon.getColumn()) == true
                         || board[dragon.getLine()][dragon.getColumn()] == wall
-                        || board[dragon.getLine()][dragon.getColumn()] == sword.getSymbol()
                         || board[dragon.getLine()][dragon.getColumn()] == exit.getSymbol())
                 {
                     dragon.returnToLastPostion();
                     validPlay = false;
                 }
+                else if (board[dragon.getLine()][dragon.getColumn()] == sword.getSymbol())
+                {
+                    dragon.guardSword();
+                }
+                else if (dragon_move > 0)
+                {
+                    dragon.leaveSword();
+                    board[sword.getLine()][sword.getColumn()] = sword.getSymbol();
+                }                
             }
 
             board[dragon.getLine()][dragon.getColumn()] = dragon.getSymbol();

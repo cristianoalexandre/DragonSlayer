@@ -2,7 +2,7 @@ package maze.logic;
 
 public class Hero extends Persona
 {
-    private char armed_symbol;
+    private char armed_symbol = 'A';
     private boolean armed = false;
     
     public Hero(int lin, int col, char symbol, char armed_symbol)
