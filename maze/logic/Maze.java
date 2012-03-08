@@ -41,7 +41,6 @@ public class Maze
     };
     private int n_col;
     private int n_lin;
-    private int n_dragon;
     private char empty = ' ';
     private char not_visited = 'N';
     private char wall = 'X';
@@ -60,8 +59,6 @@ public class Maze
         hero = new Hero(1, 1, 'H', 'A');
         sword = new Persona(8, 1, 'E');
         exit = new Exit(5, 9, 'S');
-
-        n_dragon = 2;
 
         dragon = new Dragon(3, 1, 'D');
     }
@@ -187,6 +184,7 @@ public class Maze
                         dragon.goUp();
                         break;
                 }
+                System.out.println(dragon_move);
 
                 validPlay = true;
 
@@ -205,12 +203,14 @@ public class Maze
                 {
                     dragon.leaveSword();
                     board[sword.getLine()][sword.getColumn()] = sword.getSymbol();
-                }                
+                }
             }
 
             board[dragon.getLine()][dragon.getColumn()] = dragon.getSymbol();
 
-            if (((dragon.getLastLine() != dragon.getLine()) || (dragon.getLastColumn() != dragon.getColumn())) && (dragon.getLastColumn() > 0 && dragon.getLastLine() > 0))
+            if (((dragon.getLastLine() != dragon.getLine()) || (dragon.getLastColumn() != dragon.getColumn()))
+                    && (dragon.getLastColumn() >= 0 && dragon.getLastLine() >= 0)
+                    && (dragon.getLastLine() != sword.getLine() || dragon.getLastColumn() != sword.getColumn()))
             {
                 board[dragon.getLastLine()][dragon.getLastColumn()] = empty;
             }
