@@ -46,7 +46,7 @@ public class Maze
     private char wall = 'X';
     private Hero hero;
     private Persona sword;
-    private Dragon dragon;
+    private Dragon[] dragons = new Dragon[2];
     private Exit exit;
 
     public Maze()
@@ -60,7 +60,8 @@ public class Maze
         sword = new Persona(8, 1, 'E');
         exit = new Exit(5, 9, 'S');
 
-        dragon = new Dragon(3, 1, 'D');
+        dragons[0] = new Dragon(3, 1, 'D');
+        dragons[1] = new Dragon(8, 4, 'D');
     }
 
     private boolean outOfBounds(int lin, int col)
@@ -81,7 +82,10 @@ public class Maze
         }
 
         System.out.println("hero: [" + hero.getLine() + "," + hero.getColumn() + "]");
-        System.out.println("dragon: [" + dragon.getLine() + "," + dragon.getColumn() + "]");
+        for (int i = 0; i < dragons.length; i++)
+        {
+            System.out.println("dragon: [" + dragons[i].getLine() + "," + dragons[i].getColumn() + "]");
+        }
         System.out.println("sword: [" + sword.getLine() + "," + sword.getColumn() + "]");
         System.out.println("exit: [" + exit.getLine() + "," + exit.getColumn() + "]");
 
@@ -116,6 +120,7 @@ public class Maze
         else if (board[hero.getLine()][hero.getColumn()] == sword.getSymbol())
         {
             hero.collectSword();
+            sword.die();
             exit.open();
         }
         else if (board[hero.getLine()][hero.getColumn()] == exit.getSymbol())
@@ -136,86 +141,94 @@ public class Maze
 
     private void heroVsDragon()
     {
-        if (hero.isAdjacentTo(dragon))
+        for (int i = 0; i < dragons.length; i++)
         {
-            if (hero.isArmed())
+
+            if (hero.isAdjacentTo(dragons[i]))
             {
-                dragon.die();
-                board[dragon.getLine()][dragon.getColumn()] = ' ';
-            }
-            else
-            {
-                hero.die();
+                if (hero.isArmed())
+                {
+                    dragons[i].die();
+                    board[dragons[i].getLine()][dragons[i].getColumn()] = ' ';
+                }
+                else
+                {
+                    hero.die();
+                }
             }
         }
     }
 
     public void moveDragons() // moves the dragon IF NOT dead
     {
-        if (dragon.isDead() || hero.isDead())
+        for (int i = 0; i < dragons.length; i++)
         {
-            return;
-        }
-        else
-        {
-            Random randomGenerator = new Random();
-
-            int dragon_move;
-            boolean validPlay = false;
-
-            while (validPlay == false)
+            if (dragons[i].isDead() || hero.isDead())
             {
-                dragon_move = (randomGenerator.nextInt(5));
-
-                switch (dragon_move)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        dragon.goDown();
-                        break;
-                    case 2:
-                        dragon.goLeft();
-                        break;
-                    case 3:
-                        dragon.goRight();
-                        break;
-                    case 4:
-                        dragon.goUp();
-                        break;
-                }
-                System.out.println(dragon_move);
-
-                validPlay = true;
-
-                if (outOfBounds(dragon.getLine(), dragon.getColumn()) == true
-                        || board[dragon.getLine()][dragon.getColumn()] == wall
-                        || board[dragon.getLine()][dragon.getColumn()] == exit.getSymbol())
-                {
-                    dragon.returnToLastPostion();
-                    validPlay = false;
-                }
-                else if (board[dragon.getLine()][dragon.getColumn()] == sword.getSymbol())
-                {
-                    dragon.guardSword();
-                }
-                else if (dragon_move > 0)
-                {
-                    dragon.leaveSword();
-                    board[sword.getLine()][sword.getColumn()] = sword.getSymbol();
-                }
+                /* do nothing */
             }
-
-            board[dragon.getLine()][dragon.getColumn()] = dragon.getSymbol();
-
-            if (((dragon.getLastLine() != dragon.getLine()) || (dragon.getLastColumn() != dragon.getColumn()))
-                    && (dragon.getLastColumn() >= 0 && dragon.getLastLine() >= 0)
-                    && (dragon.getLastLine() != sword.getLine() || dragon.getLastColumn() != sword.getColumn()))
+            else
             {
-                board[dragon.getLastLine()][dragon.getLastColumn()] = empty;
-            }
+                Random randomGenerator = new Random();
 
-            heroVsDragon();
+                int dragon_move;
+                boolean validPlay = false;
+
+                while (validPlay == false)
+                {
+                    dragon_move = (randomGenerator.nextInt(5));
+
+                    switch (dragon_move)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            dragons[i].goDown();
+                            break;
+                        case 2:
+                            dragons[i].goLeft();
+                            break;
+                        case 3:
+                            dragons[i].goRight();
+                            break;
+                        case 4:
+                            dragons[i].goUp();
+                            break;
+                    }
+                    System.out.println(dragon_move);
+
+                    validPlay = true;
+
+                    if (outOfBounds(dragons[i].getLine(), dragons[i].getColumn()) == true
+                            || board[dragons[i].getLine()][dragons[i].getColumn()] == wall
+                            || board[dragons[i].getLine()][dragons[i].getColumn()] == exit.getSymbol()
+                            || (board[dragons[i].getLine()][dragons[i].getColumn()] == dragons[i].getSymbol() && dragon_move > 0))
+                    {
+                        dragons[i].returnToLastPostion();
+                        validPlay = false;
+                    }
+                    else if (board[dragons[i].getLine()][dragons[i].getColumn()] == sword.getSymbol())
+                    {
+                        dragons[i].guardSword();
+                    }
+                    else if (dragon_move > 0 && sword.isDead() == false)
+                    {
+                        dragons[i].leaveSword();
+                        board[sword.getLine()][sword.getColumn()] = sword.getSymbol();
+                    }
+                }
+
+                board[dragons[i].getLine()][dragons[i].getColumn()] = dragons[i].getSymbol();
+
+                if (((dragons[i].getLastLine() != dragons[i].getLine()) || (dragons[i].getLastColumn() != dragons[i].getColumn()))
+                        && (dragons[i].getLastColumn() >= 0 && dragons[i].getLastLine() >= 0)
+                        && (dragons[i].getLastLine() != sword.getLine() || dragons[i].getLastColumn() != sword.getColumn()))
+                {
+                    board[dragons[i].getLastLine()][dragons[i].getLastColumn()] = empty;
+                }
+
+                heroVsDragon();
+            }
         }
     }
 
